@@ -1,5 +1,7 @@
 # SpritWatch
 
+[![Build Status](https://travis-ci.org/uhlig-it/spritwatch.svg?branch=master)](https://travis-ci.org/uhlig-it/spritwatch)
+
 Part of the course "Web Services", this is an OpenWhisk action that fetches the current fuel price from [Tankerkönig](https://creativecommons.tankerkoenig.de).
 
 # IBM Cloud Functions (OpenWhisk)
