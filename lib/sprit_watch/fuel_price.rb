@@ -8,5 +8,9 @@ module SpritWatch
       @type = type
       @euros = euros
     end
+
+    def to_s
+      "#{@type.to_s.capitalize}: #{@euros.to_s.tr('.', ',')} €"
+    end
   end
 end

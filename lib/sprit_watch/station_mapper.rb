@@ -9,7 +9,9 @@ module SpritWatch
       Station.new.tap do |station|
         station.id = attributes['id']
         station.brand = attributes['brand']
+        station.street = attributes['street']
         station.price = FuelPrice.new(:diesel, attributes['diesel'])
+        station.closed = !attributes['isOpen']
       end
     end
   end

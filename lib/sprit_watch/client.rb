@@ -38,14 +38,19 @@ module SpritWatch
     # +sort+  Sortierung  price, dist
     # +apikey+  Der persönliche API-Key  UUID
     #
-    def list(latitude:, longitude:, radius:, type: :all)
+    def list(latitude:, longitude:, radius:, type: :all, closed: false)
       json = JSON.parse(fetch(latitude: latitude, longitude: longitude, radius: radius, type: type))
       raise json['message'] unless json['ok'] == true
 
       station_mapper = StationMapper.new
+
+      # rubocop:disable Style/MultilineBlockChain
       json['stations'].map do |station|
         station_mapper.map(station)
+      end.reject do |station|
+        !closed && station.closed?
       end
+      # rubocop:enable Style/MultilineBlockChain
     end
 
     private

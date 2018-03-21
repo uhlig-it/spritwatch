@@ -64,7 +64,7 @@
             "diesel": 1.009,
             "e5": 1.009,
             "e10": 1.009,
-            "isOpen": true,
+            "isOpen": false,
             "houseNumber": "4",
             "postCode": 10179
         }
