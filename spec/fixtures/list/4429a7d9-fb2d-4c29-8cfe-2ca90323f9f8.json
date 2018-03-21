@@ -1,0 +1,16 @@
+{
+  "id": "4429a7d9-fb2d-4c29-8cfe-2ca90323f9f8",
+  "name": "TOTAL BERLIN",
+  "brand": "TOTAL",
+  "street": "HOLZMARKTSTR.",
+  "place": "BERLIN",
+  "lat": 52.5114,
+  "lng": 13.428477,
+  "dist": 1.2,
+  "diesel": 1.009,
+  "e5": 1.009,
+  "e10": 1.009,
+  "isOpen": true,
+  "houseNumber": "36-42",
+  "postCode": 10243
+}

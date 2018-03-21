@@ -1,0 +1,16 @@
+{
+  "id": "e1a15081-25a3-9107-e040-0b0a3dfe563c",
+  "name": "Berlin, Holzmarktstr. 4",
+  "brand": "HEM",
+  "street": "Holzmarktstr.",
+  "place": "Berlin",
+  "lat": 52.51477,
+  "lng": 13.419435,
+  "dist": 1.4,
+  "diesel": 1.009,
+  "e5": 1.009,
+  "e10": 1.009,
+  "isOpen": true,
+  "houseNumber": "4",
+  "postCode": 10179
+}
