@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH.unshift(File.expand_path('../lib', __dir__))
+
+require 'thor'
+require 'sprit_watch'
+
+class SpritWatch::CLI < Thor
+  desc 'list', 'list stations'
+  option :latitude, type: :numeric, required: true, desc: 'Latitude to search from'
+  option :longitude, type: :numeric, required: true, desc: 'Longitude to search from'
+  option :radius, type: :numeric, default: 2, desc: 'Search radius in km'
+  long_desc 'Lists all stations around the given point.'
+  def list
+    SpritWatch::Client.new(ENV.fetch('TANKERKOENIG_API_KEY')).list(
+      latitude: options[:latitude],
+      longitude: options[:longitude],
+      radius: options[:radius]
+    ).each do |station|
+      puts "#{station}: #{station.price(:diesel)}"
+    end
+  end
+end
+
+SpritWatch::CLI.start(ARGV)
