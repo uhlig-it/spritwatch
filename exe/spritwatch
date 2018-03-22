@@ -13,20 +13,23 @@ module SpritWatch
     option :longitude, type: :numeric, required: true, desc: 'Longitude to search from'
     option :radius, type: :numeric, default: 2, desc: 'Search radius in km'
     option :closed, type: :boolean, default: false, desc: 'Include stations that are currently closed'
-
+    option :format, type: :string, default: 'long', desc: "Format of the output; one of #{SpritWatch::Formatter.formats.join(', ')}"
     # option :fuel, type: :array, default: :all, desc: 'Fuel type (e5, e10, diesel, all). Multiple types can be given if separated by a space.'
     long_desc 'Lists all stations around the given point.'
     def list
+      # warn "Stations within #{options[:radius]} km of #{options[:latitude]}, #{options[:longitude]}:"
       SpritWatch::Client.new(ENV.fetch('TANKERKOENIG_API_KEY')).list(
         latitude: options[:latitude],
         longitude: options[:longitude],
         radius: options[:radius],
         closed: options[:closed]
       ).each do |station|
-        puts "#{station} => #{station.price(:diesel)}"
-        # puts "#{station}: #{station.price(options[:fuel].map(&:to_sym))}"
+        puts SpritWatch::Formatter.formatter(options[:format]).format(station)
       end
     end
+
+    # TODO
+    # "#{station}: #{station.price(options[:fuel].map(&:to_sym))}"
   end
 end
 
