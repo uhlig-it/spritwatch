@@ -18,19 +18,25 @@ module SpritWatch
     long_desc 'Lists all stations around the given point.'
     def list
       # warn "Stations within #{options[:radius]} km of #{options[:latitude]}, #{options[:longitude]}:"
+      client(options).each do |station|
+        puts SpritWatch::Formatter.formatter(options[:format]).format(station)
+      end
+    end
+
+    private
+
+    def client(options)
       SpritWatch::Client.new(ENV.fetch('TANKERKOENIG_API_KEY')).list(
         latitude: options[:latitude],
         longitude: options[:longitude],
         radius: options[:radius],
         closed: options[:closed]
-      ).each do |station|
-        puts SpritWatch::Formatter.formatter(options[:format]).format(station)
-      end
+      )
     end
-
-    # TODO
-    # "#{station}: #{station.price(options[:fuel].map(&:to_sym))}"
   end
 end
 
 SpritWatch::CLI.start(ARGV)
+
+# TODO: All prices
+# "#{station}: #{station.price(options[:fuel].map(&:to_sym))}"
