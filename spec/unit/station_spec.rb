@@ -5,12 +5,13 @@ describe SpritWatch::Station do
     described_class.new(
       id: '0815',
       brand: 'Esso',
-      street: 'Bornholmer Str. 11'
+      street: 'Bornholmer Str. 33',
+      city: 'Berlin'
     )
   end
 
   it 'has a string representation' do
-    expect(station.to_s).to eq('Esso, Bornholmer Str. 11')
+    expect(station.to_s).to eq('Esso, Bornholmer Str. 33, Berlin')
   end
 
   it 'can tell whether it is closed' do

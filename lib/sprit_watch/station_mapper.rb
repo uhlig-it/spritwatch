@@ -7,9 +7,10 @@ module SpritWatch
   class StationMapper
     def map(attributes)
       Station.new.tap do |station|
-        station.id = attributes['id']
-        station.brand = attributes['brand']
-        station.street = attributes['street']
+        station.id = attributes['id'].strip
+        station.brand = attributes['brand'].strip
+        station.street = [attributes['street'], attributes['houseNumber']].join(' ').strip
+        station.city = attributes['place'].strip
         station.price = FuelPrice.new(:diesel, attributes['diesel'])
         station.closed = !attributes['isOpen']
       end

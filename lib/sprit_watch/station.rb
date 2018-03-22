@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module SpritWatch
-  Station = Struct.new(:id, :brand, :street, :closed, keyword_init: true) do
+  Station = Struct.new(:id, :brand, :street, :city, :closed, keyword_init: true) do
     def price=(price)
       prices[price.type] = price
     end
@@ -11,13 +11,11 @@ module SpritWatch
     end
 
     def closed?
-      # rubocop:disable Style/DoubleNegation
-      !!closed
-      # rubocop:enable Style/DoubleNegation
+      closed
     end
 
     def to_s
-      "#{brand}, #{street}"
+      "#{brand}, #{street}, #{city}"
     end
 
     private

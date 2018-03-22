@@ -3,7 +3,7 @@
 describe SpritWatch::StationMapper do
   subject(:station) { described_class.new.map(json) }
 
-  context 'Total Station in Sommer-Straße' do
+  context 'Total Station in Sommer-Straße 2' do
     let(:json) { JSON.parse(fixture('list/474e5046-deaf-4f9b-9a32-9797b778f047.json').read) }
 
     it 'produces a Station' do
@@ -23,7 +23,11 @@ describe SpritWatch::StationMapper do
     end
 
     it 'produces a Station with a street address' do
-      expect(station.street).to eq('MARGARETE-SOMMER-STR.')
+      expect(station.street).to eq('MARGARETE-SOMMER-STR. 2')
+    end
+
+    it 'produces a Station with a city' do
+      expect(station.city.upcase).to eq('BERLIN')
     end
 
     it 'produces a Station with a price for Diesel' do
@@ -40,6 +44,10 @@ describe SpritWatch::StationMapper do
 
     it 'produces a Station with a closed? attribute' do
       expect(station.closed?).to be_truthy
+    end
+
+    it 'produces a Station with a street address' do
+      expect(station.street).to eq('Holzmarktstr. 4')
     end
   end
 end
