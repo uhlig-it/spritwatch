@@ -1,22 +1,32 @@
 # frozen_string_literal: true
 
 require 'sprit_watch/station'
-require 'sprit_watch/fuel_price'
+require 'sprit_watch/fuel_price_factory'
 
 module SpritWatch
   class StationMapper
+    def initialize
+      @fuel_price_factory = FuelPriceFactory.new
+    end
+
     def map(attributes)
       Station.new.tap do |station|
         station.id = attributes['id'].strip
         station.brand = attributes['brand'].strip
         station.street = street(attributes)
         station.city = attributes['place'].strip
-        station.price = FuelPrice.new(:diesel, attributes['diesel'])
         station.closed = !attributes['isOpen']
+        assign_prices(station, attributes)
       end
     end
 
     private
+
+    def assign_prices(station, attributes)
+      TYPES.each do |type|
+        station.price = @fuel_price_factory.produce(type, attributes[type.to_s], '€')
+      end
+    end
 
     def street(attributes)
       [

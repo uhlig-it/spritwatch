@@ -25,6 +25,11 @@ describe SpritWatch::Station do
     expect(station).to eq(station)
   end
 
+  it 'can be sorted' do
+    type = :diesel
+    [station, station].sort { |a, b| a.price(type.to_sym) <=> b.price(type.to_sym) }
+  end
+
   context 'when duplicated' do
     let(:duplicate) { station.dup }
 

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'sprit_watch/price'
+
 describe SpritWatch::StationMapper do
   subject(:station) { described_class.new.map(json) }
 
@@ -31,7 +33,15 @@ describe SpritWatch::StationMapper do
     end
 
     it 'produces a Station with a price for Diesel' do
-      expect(station.price(:diesel).euros).to eq(1.009)
+      expect(station.price(:diesel)).to eq(SpritWatch::FuelPrice.new(:diesel, SpritWatch::Price.new(1.009, '€')))
+    end
+
+    it 'produces a Station with a price for E10' do
+      expect(station.price(:e10)).to eq(SpritWatch::FuelPrice.new(:e10, SpritWatch::Price.new(1.009, '€')))
+    end
+
+    it 'produces a Station with a price for E5' do
+      expect(station.price(:e5)).to eq(SpritWatch::FuelPrice.new(:e5, SpritWatch::Price.new(1.009, '€')))
     end
   end
 
