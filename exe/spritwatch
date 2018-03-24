@@ -15,18 +15,22 @@ module SpritWatch
     option :longitude, type: :numeric, required: true, desc: 'Longitude to search from'
     option :radius, type: :numeric, default: 2, desc: 'Search radius in km'
     option :closed, type: :boolean, default: false, desc: 'Include stations that are currently closed'
-    option :format, type: :string, default: 'long', desc: "Format of the output; one of #{SpritWatch::Formatter.formats.join(', ')}"
-    # option :fuel, type: :array, default: :all, desc: 'Fuel type (e5, e10, diesel, all). Multiple types can be given if separated by a space.'
+    option :format, type: :string, default: 'short', desc: "Format of the output; one of #{SpritWatch::Formatter.formats.join(', ')}"
+    # TODO option :fuel, type: :array, default: :all, desc: 'Fuel type (e5, e10, diesel, all). Multiple types can be given if separated by a space.'
+    # TODO sort by price
+    # TODO sort by distance
     long_desc 'Lists all stations around the given point.'
     def list
-      # warn "Stations within #{options[:radius]} km of #{options[:latitude]}, #{options[:longitude]}:"
+      warn "Stations within #{options[:radius]} km of #{options[:latitude]}, #{options[:longitude]}:"
       client.list(list_options(options)).each do |station|
+        # TODO print distance to point of origin
         puts SpritWatch::Formatter.formatter(options[:format]).format(station)
       end
     end
 
     desc 'prices', 'list prices for the preferred stations (listed in ~/.spritwatch.yml.)'
-    # TODO override type(s) printed
+    # TODO option :closed, type: :boolean, default: false, desc: 'Include stations that are currently closed'
+    # TODO override / specify the type(s) printed
     def prices
       preferred_stations = preferences['stations'].map { |s| s['id'] }
       prices = client.prices(preferred_stations)
