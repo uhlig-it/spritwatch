@@ -14,6 +14,7 @@ group :development do
   gem 'rake'
   gem 'rerun'
   gem 'rspec'
+  gem 'rspec-collection_matchers'
   gem 'rubocop'
   gem 'webmock'
 end

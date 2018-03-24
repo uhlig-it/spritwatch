@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
+require 'rspec/collection_matchers'
+
 describe SpritWatch::Station do
   subject(:station) do
     described_class.new(
-      id: '0815',
+      id: '387834dc-4244-4091-ae3f-1cbe9dd91c80',
       brand: 'Esso',
       street: 'Bornholmer Str. 33',
       city: 'Berlin'
@@ -16,5 +18,28 @@ describe SpritWatch::Station do
 
   it 'can tell whether it is closed' do
     expect(station.closed?).to be_falsey
+  end
+
+  it 'is compared by identity' do
+    expect(station).to eq(described_class.new(id: '387834dc-4244-4091-ae3f-1cbe9dd91c80'))
+    expect(station).to eq(station)
+  end
+
+  context 'when duplicated' do
+    let(:duplicate) { station.dup }
+
+    it 'is different' do
+      expect(duplicate).to_not eq(station)
+    end
+
+    it 'has a proper identity' do
+      expect(duplicate.id).to have(36).characters
+    end
+
+    it 'retains the attributes of the original' do
+      %w[brand street city].each do |attribute|
+        expect(duplicate.send(attribute)).to eq(station.send(attribute))
+      end
+    end
   end
 end

@@ -3,8 +3,10 @@
 
 $LOAD_PATH.unshift(File.expand_path('../lib', __dir__))
 
-require 'thor'
+require 'pathname'
 require 'sprit_watch'
+require 'thor'
+require 'yaml'
 
 module SpritWatch
   class CLI < Thor
@@ -18,25 +20,57 @@ module SpritWatch
     long_desc 'Lists all stations around the given point.'
     def list
       # warn "Stations within #{options[:radius]} km of #{options[:latitude]}, #{options[:longitude]}:"
-      client(options).each do |station|
+      client.list(list_options(options)).each do |station|
         puts SpritWatch::Formatter.formatter(options[:format]).format(station)
+      end
+    end
+
+    desc 'prices', 'list prices for the preferred stations (listed in ~/.spritwatch.yml.)'
+    # TODO override type(s) printed
+    def prices
+      preferred_stations = preferences['stations'].map { |s| s['id'] }
+      prices = client.prices(preferred_stations)
+
+      # TODO If only one type is given, do not indent
+      preferences['types'].each do |type|
+        sorted = prices.sort_by { |s| s.price(type.to_sym).euros }
+        print_by_type(type, sorted)
       end
     end
 
     private
 
-    def client(options)
-      SpritWatch::Client.new(ENV.fetch('TANKERKOENIG_API_KEY')).list(
+    def list_options(options)
+      {
         latitude: options[:latitude],
         longitude: options[:longitude],
         radius: options[:radius],
         closed: options[:closed]
-      )
+      }
+    end
+
+    def client
+      SpritWatch::Client.new(ENV.fetch('TANKERKOENIG_API_KEY'))
+    end
+
+    def preferences
+      YAML.load_file(Pathname('~/.spritwatch.yml').expand_path)
+    end
+
+    def print_by_type(type, prices)
+      warn "#{type.to_s.capitalize}:"
+
+      prices.each do |station|
+        # TODO: Split off Price from FuelPrice and then remove euros from here
+        puts "  #{station_name(station.id)}: #{station.price(type.to_sym).euros}"
+      end
+    end
+
+    # TODO: This may fail, may need to look it up via #details or use a NullName (falling back to the station's id)
+    def station_name(id)
+      preferences['stations'].select { |h| h['id'] == id }.first['name']
     end
   end
 end
 
 SpritWatch::CLI.start(ARGV)
-
-# TODO: All prices
-# "#{station}: #{station.price(options[:fuel].map(&:to_sym))}"

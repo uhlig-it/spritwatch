@@ -14,7 +14,7 @@ module SpritWatch
 
     class Long
       def format(station)
-        "#{station.id} #{station.street} #{station.city}: #{station.price(:diesel)}"
+        "#{station.id} #{station}: #{station.price(:diesel)}"
       end
     end
 

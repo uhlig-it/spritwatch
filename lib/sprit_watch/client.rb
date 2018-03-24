@@ -1,13 +1,6 @@
 # frozen_string_literal: true
 
-# prices
-# Parameter  Bedeutung  Format
-# ids  IDs der Tankstellen  UUIDs, durch Komma getrennt
-# apikey  Der persönliche API-Key  UUID
-#
-# https://creativecommons.tankerkoenig.de/json/prices.php?ids=4429a7d9-fb2d-4c29-8cfe-2ca90323f9f8,446bdcf5-9f75-47fc-9cfa-2c3d6fda1c3b,60c0eefa-d2a8-4f5c-82cc-b5244ecae955,44444444-4444-4444-4444-444444444444&apikey=00000000-0000-0000-0000-000000000002
-#
-# details
+# TODO: details
 # Parameter-Name  Bedeutung  Werte
 # openingTimes  Öffnungszeiten  Array mit Objekten, in denen der Text und die Zeiten stehen
 # overrides  erweiterte Öffnungszeiten  Änderungen der regulären ÖZ - bspw. eine temporäre Schliessung
@@ -24,6 +17,8 @@ require 'json'
 
 module SpritWatch
   class Client
+    # Parameters:
+    # +api_key+  Der persönliche API-Key  UUID
     def initialize(api_key)
       @api_key = api_key
     end
@@ -31,21 +26,18 @@ module SpritWatch
     # Umkreissuche
     #
     # Parameters:
-    # +lat+  geographische Breite des Standortes  Floatingpoint-Zahl
-    # +lng+  geographische Länge  Floatingpoint-Zahl
-    # +rad+  Suchradius in km  Floatingpoint-Zahl, max: 25
+    # +latitude+  geographische Breite des Standortes  Floatingpoint-Zahl
+    # +longitude+  geographische Länge  Floatingpoint-Zahl
+    # +radius+  Suchradius in km  Floatingpoint-Zahl, max: 25
     # +type+  Spritsorte  :e5, :e10, :diesel, :all. Defaults to :all
-    # +sort+  Sortierung  price, dist
-    # +apikey+  Der persönliche API-Key  UUID
+    # TODO +sort+  Sortierung  price, dist
     #
     def list(latitude:, longitude:, radius:, type: :all, closed: false)
-      json = JSON.parse(fetch(latitude: latitude, longitude: longitude, radius: radius, type: type))
-      raise json['message'] unless json['ok'] == true
-
       station_mapper = StationMapper.new
+      response = fetch_list(latitude: latitude, longitude: longitude, radius: radius, type: type)
 
       # rubocop:disable Style/MultilineBlockChain
-      json['stations'].map do |station|
+      response['stations'].map do |station|
         station_mapper.map(station)
       end.reject do |station|
         !closed && station.closed?
@@ -53,14 +45,42 @@ module SpritWatch
       # rubocop:enable Style/MultilineBlockChain
     end
 
+    # Preisabfrage
+    #
+    # Parameter  Bedeutung  Format
+    # ids  IDs der Tankstellen  UUIDs, durch Komma getrennt
+    def prices(*ids)
+      price_mapper = PriceMapper.new
+
+      fetch_prices(ids)['prices'].map do |id, attributes|
+        price_mapper.map(id, attributes)
+      end
+    end
+
     private
 
     BASE_URI = 'https://creativecommons.tankerkoenig.de/json'
 
-    def fetch(latitude:, longitude:, radius:, type:)
-      RestClient.get("#{BASE_URI}/list.php", params: { lat: latitude, lng: longitude, rad: radius, type: type, apikey: @api_key }).tap do |response|
+    def fetch_list(latitude:, longitude:, radius:, type:)
+      # rubocop:disable Style/MultilineBlockChain
+      RestClient.get("#{BASE_URI}/list.php", params: { lat: latitude, lng: longitude, rad: radius, type: type, apikey: @api_key }).yield_self do |response|
         raise response.body if response.code != 200
+        JSON.parse(response.body)
+      end.tap do |response|
+        raise response['message'] unless response['ok'] == true
       end
+      # rubocop:enable Style/MultilineBlockChain
+    end
+
+    def fetch_prices(*ids)
+      # rubocop:disable Style/MultilineBlockChain
+      RestClient.get("#{BASE_URI}/prices.php", params: { ids: ids.join(','), apikey: @api_key }).yield_self do |response|
+        raise response.body if response.code != 200
+        JSON.parse(response.body)
+      end.tap do |response|
+        raise response['message'] unless response['ok'] == true
+      end
+      # rubocop:enable Style/MultilineBlockChain
     end
   end
 end
