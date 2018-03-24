@@ -15,6 +15,9 @@
 require 'rest-client'
 require 'json'
 
+require 'sprit_watch/station_mapper'
+require 'sprit_watch/price_mapper'
+
 module SpritWatch
   class Client
     # Parameters:

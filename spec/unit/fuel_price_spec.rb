@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'sprit_watch/fuel_price'
 require 'sprit_watch/price'
 
 describe SpritWatch::FuelPrice do

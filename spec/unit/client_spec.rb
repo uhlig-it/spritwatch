@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'sprit_watch/client'
+
 describe SpritWatch::Client do
   subject(:client) { described_class.new(api_key) }
   let(:lat) { 52.521 }

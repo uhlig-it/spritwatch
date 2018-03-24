@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'sprit_watch'
 require 'pathname'
 require 'webmock/rspec'
 

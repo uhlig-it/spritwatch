@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rspec/collection_matchers'
+require 'sprit_watch/station'
 
 describe SpritWatch::Station do
   subject(:station) do

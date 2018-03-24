@@ -4,9 +4,11 @@
 $LOAD_PATH.unshift(File.expand_path('../lib', __dir__))
 
 require 'pathname'
-require 'sprit_watch'
 require 'thor'
 require 'yaml'
+
+require 'sprit_watch/formatter'
+require 'sprit_watch/client'
 
 module SpritWatch
   class CLI < Thor

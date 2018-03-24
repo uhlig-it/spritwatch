@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'sprit_watch/price'
+require 'sprit_watch/station_mapper'
 
 describe SpritWatch::StationMapper do
   subject(:station) { described_class.new.map(json) }
