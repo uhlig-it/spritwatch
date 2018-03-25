@@ -36,7 +36,7 @@ module SpritWatch
       end
 
       def present(stations, prefix = '')
-        warn "Prices for #{type.to_s.capitalize} as of #{Time.now}:"
+        warn "#{type.to_s.capitalize} prices as of #{Time.now}:"
 
         sorted(stations).each do |station|
           price = station.price(type.to_sym).price
@@ -64,9 +64,7 @@ module SpritWatch
       end
 
       def present(stations)
-        warn "Prices as of #{Time.now}:"
         types.each do |type|
-          warn "#{type.to_s.capitalize}:"
           Single.new(station_registry, type).present(stations, '  ')
         end
       end
