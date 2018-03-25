@@ -8,6 +8,7 @@ require 'thor'
 require 'yaml'
 
 require 'sprit_watch/formatter'
+require 'sprit_watch/price_presenter'
 require 'sprit_watch/client'
 
 module SpritWatch
@@ -36,14 +37,9 @@ module SpritWatch
       option type, type: :boolean, default: nil, desc: "Include #{type} prices"
     end
     def prices
-      preferred_stations = preferences['stations'].map { |s| s['id'] }
       stations = client.prices(preferred_stations).reject(&:closed?)
       preferred_types = preferred_types(options)
-      warn 'Warning: Evaluation of preferred types and command-line switches yields an empty list' if preferred_types.empty?
-      preferred_types.each do |type|
-        sorted = stations.sort { |a, b| a.price(type) <=> b.price(type) }
-        print_by_type(type, sorted)
-      end
+      PricePresenter.find(preferred_types).present(stations)
     end
 
     private
@@ -61,40 +57,34 @@ module SpritWatch
       SpritWatch::Client.new(ENV.fetch('TANKERKOENIG_API_KEY'))
     end
 
+    # TODO: Dupe
     def preferences
       YAML.load_file(Pathname('~/.spritwatch.yml').expand_path)
-    end
-
-    def print_by_type(type, prices)
-      warn "#{type.to_s.capitalize}:"
-
-      prices.each do |station|
-        # TODO: Do not include the type if multiple types are given and we print the type above
-        # TODO: Do not indent if only one type is given
-        puts "  #{station_name(station.id)}: #{station.price(type.to_sym)}"
-      end
-    end
-
-    # TODO: This may fail; we may need to look it up via #details or use a NullName (falling back to the station's id)
-    def station_name(id)
-      preferences['stations'].select { |h| h['id'] == id }.first['name']
     end
 
     def preferred_types(options)
       (preferences['types'].map(&:to_sym) || TYPES).tap do |preferred_types|
         TYPES.each do |type|
-          case options[type]
-          when nil
-            # no change
-          when true
-            preferred_types.prepend(type)
-          when false
-            preferred_types.delete(type)
-          else
-            raise "Unexpected option #{options[type]}"
-          end
+          augment_types(preferred_types, options[type], type)
         end
       end.uniq
+    end
+
+    def augment_types(preferred_types, option, augment_with)
+      case option
+      when nil
+        preferred_types # no change
+      when true
+        preferred_types.prepend(augment_with)
+      when false
+        preferred_types.delete(augment_with)
+      else
+        raise "Unexpected option #{option}"
+      end
+    end
+
+    def preferred_stations
+      preferences['stations'].map { |s| s['id'] }
     end
   end
 end

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module SpritWatch
+  # TODO: Presenter is probably a better name
   module Formatter
     class << self
       def formats
