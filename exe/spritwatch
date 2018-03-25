@@ -37,10 +37,10 @@ module SpritWatch
       option type, type: :boolean, default: nil, desc: "Include #{type} prices"
     end
     def prices
-      selection = StationRegistry.new(preferences['stations'])
-      selected_stations = client.prices(selection.all).reject(&:closed?)
-      preferred_types = preferred_types(options)
-      PricePresenter.new(selection).find(preferred_types).present(selected_stations)
+      preferred_stations = StationRegistry.new(preferences['stations'])
+      selected_stations = client.prices(preferred_stations.all).reject(&:closed?)
+      overridden_types = apply_overrides(preferred_types, options)
+      PricePresenter.new(preferred_stations).find(overridden_types).present(selected_stations)
     end
 
     private
@@ -58,27 +58,32 @@ module SpritWatch
       SpritWatch::Client.new(ENV.fetch('TANKERKOENIG_API_KEY'))
     end
 
-    # TODO: Dupe
     def preferences
       YAML.load_file(Pathname('~/.spritwatch.yml').expand_path)
     end
 
-    def preferred_types(options)
-      (preferences['types'].map(&:to_sym) || TYPES).tap do |preferred_types|
+    def preferred_types
+      preferences['types'].map(&:to_sym)
+    end
+
+    # apply command-line overrides for all preferred types
+    def apply_overrides(preferred_types, options)
+      (preferred_types || TYPES).tap do |pt|
         TYPES.each do |type|
-          augment_types(preferred_types, options[type], type)
+          apply_override(pt, options[type], type)
         end
       end.uniq
     end
 
-    def augment_types(preferred_types, option, augment_with)
+    # apply command-line override for a single type
+    def apply_override(preferred_types, option, override_type)
       case option
       when nil
         preferred_types # no change
       when true
-        preferred_types.prepend(augment_with)
+        preferred_types.prepend(override_type)
       when false
-        preferred_types.delete(augment_with)
+        preferred_types.delete(override_type)
       else
         raise "Unexpected option #{option}"
       end
