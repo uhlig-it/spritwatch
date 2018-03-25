@@ -37,9 +37,10 @@ module SpritWatch
       option type, type: :boolean, default: nil, desc: "Include #{type} prices"
     end
     def prices
-      stations = client.prices(preferred_stations).reject(&:closed?)
+      selection = StationRegistry.new(preferences['stations'])
+      selected_stations = client.prices(selection.all).reject(&:closed?)
       preferred_types = preferred_types(options)
-      PricePresenter.find(preferred_types).present(stations)
+      PricePresenter.new(selection).find(preferred_types).present(selected_stations)
     end
 
     private
@@ -81,10 +82,6 @@ module SpritWatch
       else
         raise "Unexpected option #{option}"
       end
-    end
-
-    def preferred_stations
-      preferences['stations'].map { |s| s['id'] }
     end
   end
 end

@@ -1,27 +1,24 @@
 # frozen_string_literal: true
 
+require 'sprit_watch/station_registry'
+
 module SpritWatch
   class PricePresenter
-    def self.find(preferred_types)
-      case preferred_types.size
+    attr_reader :station_registry
+
+    def initialize(station_registry)
+      @station_registry = station_registry
+    end
+
+    def find(types)
+      case types.size
       when 0
         Null.new
       when 1
-        type = preferred_types.first
-        Single.new(type)
+        Single.new(station_registry, types.first)
       else
-        Multi.new(preferred_types)
+        Multi.new(station_registry, types)
       end
-    end
-
-    # TODO: This may fail; we may need to look it up via #details or use a NullName (falling back to the station's id)
-    def station_name(id)
-      preferences['stations'].select { |h| h['id'] == id }.first['name']
-    end
-
-    # TODO: Dupe
-    def preferences
-      YAML.load_file(Pathname('~/.spritwatch.yml').expand_path)
     end
 
     class Null
@@ -33,7 +30,8 @@ module SpritWatch
     class Single < PricePresenter
       attr_reader :type
 
-      def initialize(type)
+      def initialize(station_registry, type)
+        super(station_registry)
         @type = type
       end
 
@@ -41,21 +39,27 @@ module SpritWatch
         warn "Prices for #{type.to_s.capitalize} as of #{Time.now}:"
 
         sorted(stations).each do |station|
-          puts "#{prefix}#{station_name(station.id)}: #{station.price(type.to_sym).price}"
+          price = station.price(type.to_sym).price
+          puts "#{prefix}#{lookup_station_name(station)}: #{price}"
         end
       end
 
       private
+
+      def lookup_station_name(station)
+        station_registry.lookup(station.id)
+      end
 
       def sorted(stations)
         stations.sort { |a, b| a.price(type) <=> b.price(type) }
       end
     end
 
-    class Multi
+    class Multi < PricePresenter
       attr_reader :types
 
-      def initialize(types)
+      def initialize(station_registry, types)
+        super(station_registry)
         @types = types
       end
 
@@ -63,7 +67,7 @@ module SpritWatch
         warn "Prices as of #{Time.now}:"
         types.each do |type|
           warn "#{type.to_s.capitalize}:"
-          Single.new(type).present(stations, '  ')
+          Single.new(station_registry, type).present(stations, '  ')
         end
       end
     end
