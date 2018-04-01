@@ -53,6 +53,8 @@ module SpritWatch
     # Parameter  Bedeutung  Format
     # ids  IDs der Tankstellen  UUIDs, durch Komma getrennt
     def prices(*ids)
+      raise 'Stations are missing' if ids.flatten.empty?
+
       price_mapper = PriceMapper.new
 
       fetch_prices(ids)['prices'].map do |id, attributes|

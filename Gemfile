@@ -6,6 +6,7 @@ gem 'rest-client'
 gem 'sinatra'
 
 group :development do
+  gem 'aruba'
   gem 'guard-bundler', require: false
   gem 'guard-rspec', require: false
   gem 'pry'

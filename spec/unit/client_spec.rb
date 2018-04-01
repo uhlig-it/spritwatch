@@ -100,6 +100,16 @@ describe SpritWatch::Client do
           expect(stations).to include(SpritWatch::Station.new(id: station_id))
         end
       end
+
+      context 'with an empty set of stations' do
+        let(:station_ids) { [] }
+
+        it 'raises an exception' do
+          expect { client.prices(station_ids) }.to raise_error do |err|
+            expect(err.message).to eq('Stations are missing')
+          end
+        end
+      end
     end
   end
 end

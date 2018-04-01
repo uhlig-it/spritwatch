@@ -5,14 +5,26 @@ $LOAD_PATH.unshift(File.expand_path('../lib', __dir__))
 
 require 'pathname'
 require 'thor'
-require 'yaml'
+require 'English'
 
 require 'sprit_watch/formatter'
 require 'sprit_watch/price_presenter'
 require 'sprit_watch/client'
+require 'sprit_watch/preferences'
 
 module SpritWatch
   class CLI < Thor
+    default_task :about
+
+    desc 'about', 'Explain what this app is about'
+    def about
+      puts <<~ABOUT
+        Fetches the current fuel prices from Tankerkönig.
+
+      ABOUT
+      help
+    end
+
     desc 'list', 'List stations within the given coordinates'
     option :latitude, type: :numeric, required: true, desc: 'Latitude to search from'
     option :longitude, type: :numeric, required: true, desc: 'Longitude to search from'
@@ -31,17 +43,22 @@ module SpritWatch
       end
     end
 
-    desc 'prices', 'List prices for the preferred stations (listed in ~/.spritwatch.yml.)'
+    desc 'prices', "List prices for the preferred stations (listed in #{Preferences::PREFERENCES_FILE}.)"
     # TODO: option :closed, type: :boolean, default: false, desc: 'Include stations that are currently closed'
     TYPES.each do |type|
       option type, type: :boolean, default: nil, desc: "Include #{type} prices"
     end
+    # rubocop:disable Metrics/AbcSize
     def prices
-      preferred_stations = StationRegistry.new(preferences['stations'])
+      preferred_stations = StationRegistry.new(preferences.stations)
       selected_stations = client.prices(preferred_stations.all).reject(&:closed?)
-      overridden_types = apply_overrides(preferred_types, options)
+      overridden_types = apply_overrides(preferences.types, options)
       PricePresenter.new(preferred_stations).find(overridden_types).present(selected_stations)
+    rescue StandardError
+      warn "Error: #{$ERROR_INFO.message}"
+      exit 1
     end
+    # rubocop:enable Metrics/AbcSize
 
     private
 
@@ -59,16 +76,12 @@ module SpritWatch
     end
 
     def preferences
-      YAML.load_file(Pathname('~/.spritwatch.yml').expand_path)
-    end
-
-    def preferred_types
-      preferences['types'].map(&:to_sym)
+      @preferences ||= Preferences.new
     end
 
     # apply command-line overrides for all preferred types
-    def apply_overrides(preferred_types, options)
-      (preferred_types || TYPES).tap do |pt|
+    def apply_overrides(_preferred_types, options)
+      (preferences.types || TYPES).tap do |pt|
         TYPES.each do |type|
           apply_override(pt, options[type], type)
         end
