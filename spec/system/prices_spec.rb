@@ -13,6 +13,7 @@ describe 'prices', type: 'aruba' do
 
   before do
     set_environment_variable('SPRITWATCH_PREFERENCES_FILE', preferences_file)
+    set_environment_variable('TANKERKOENIG_API_KEY', '00000000-0000-0000-0000-000000000002')
     run "bundle exec #{aruba.root_directory}/exe/spritwatch prices"
   end
 
