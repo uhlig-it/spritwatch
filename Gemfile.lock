@@ -91,6 +91,7 @@ GEM
       byebug (~> 10.0)
       pry (~> 0.10)
     public_suffix (3.0.2)
+    puma (3.11.3)
     rack (2.0.4)
     rack-protection (2.0.1)
       rack
@@ -158,6 +159,7 @@ DEPENDENCIES
   guard-rspec
   pry
   pry-byebug
+  puma
   rack-test
   rake
   rerun
