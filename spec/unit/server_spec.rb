@@ -18,8 +18,8 @@ describe SpritWatch::Server do
 
   it 'can be called with proper payload' do
     post '/run', {
-      'value' => {
-        'ids' => [4711, 851]
+      value: {
+        ids: [4711, 851]
       }
     }.to_json
 
