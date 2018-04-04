@@ -52,6 +52,20 @@ wsk action update spritwatch --docker $IMAGE_NAME
 wsk action invoke spritwatch -r -p ids 95d000e0-48a3-41e1-907f-e32dc9d58525,51d4b53f-a095-1aa0-e100-80009459e03a
 ```
 
+## Development
+
+1. Start the HTTP server that implements the OpenWhisk action:
+
+   ```bash
+   rerun bundle exec rackup
+   ```
+
+1. Invoke the action via HTTP:
+
+   ```bash
+  curl -H "Content-Type: application/json" -X POST -d '{"value": {"ids": "4429a7d9-fb2d-4c29-8cfe-2ca90323f9f8", "TANKERKOENIG_API_KEY": "00000000-0000-0000-0000-000000000002"}}' localhost:8080/run
+   ```
+
 # Calling the OpenWhisk API
 
 ```ruby

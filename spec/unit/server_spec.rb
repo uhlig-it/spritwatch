@@ -11,10 +11,16 @@ describe SpritWatch::Server do
     described_class
   end
 
+  before do
+    allow_any_instance_of(SpritWatch::Client).to receive(:prices).and_return(prices)
+  end
+
+  let(:prices) { [] }
+
   it 'can be initialized' do
     post '/init', {
       binary: false,
-      code: 'unused',
+      code: 'unused'
     }.to_json
     expect(last_response).to be_ok
   end
@@ -22,12 +28,13 @@ describe SpritWatch::Server do
   it 'can be called with proper payload' do
     post '/run', {
       value: {
-        ids: "4711, 851"
+        ids: '4711, 851',
+        TANKERKOENIG_API_KEY: '00000000-0000-0000-0000-000000000002'
       }
     }.to_json
 
     expect(last_response).to be_ok
-    expect(last_response.body).to include('TODO')
+    expect(last_response.body).to include('prices are')
   end
 
   it 'can be called without payload' do
