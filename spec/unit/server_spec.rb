@@ -12,14 +12,17 @@ describe SpritWatch::Server do
   end
 
   it 'can be initialized' do
-    post '/init'
+    post '/init', {
+      binary: false,
+      code: 'unused',
+    }.to_json
     expect(last_response).to be_ok
   end
 
   it 'can be called with proper payload' do
     post '/run', {
       value: {
-        ids: [4711, 851]
+        ids: "4711, 851"
       }
     }.to_json
 

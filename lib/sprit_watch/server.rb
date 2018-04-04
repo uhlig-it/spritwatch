@@ -8,7 +8,8 @@ module SpritWatch
     set :port, 8080
 
     post '/init' do
-      warn "Initializing with #{request.params}"
+      # TODO What can we do with this? Is that the overlay file as in http://jamesthom.as/blog/2017/08/04/large-applications-on-openwhisk/?
+      warn "Initializing with #{JSON.parse(request.body.read)}"
     end
 
     # test with
@@ -16,7 +17,8 @@ module SpritWatch
     post '/run' do
       content_type :json
       params = JSON.parse(request.body.read)
-      stations = params.dig('value', 'ids') || '95d000e0-48a3-41e1-907f-e32dc9d58525'
+      stations = params.dig('value', 'ids').split(',')
+      raise "Missing parameter for stations" if stations.empty?
       JSON.dump('result' => { 'msg' => "TODO: fetch prices for #{stations.size} stations: #{stations}" })
     rescue StandardError => error
       status 500
