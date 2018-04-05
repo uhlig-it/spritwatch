@@ -49,7 +49,7 @@ wsk action create spritwatch --docker $IMAGE_NAME
 wsk action update spritwatch --docker $IMAGE_NAME
 
 # invoke
-wsk action invoke spritwatch -r -p ids 95d000e0-48a3-41e1-907f-e32dc9d58525,51d4b53f-a095-1aa0-e100-80009459e03a
+wsk action invoke spritwatch -r -p ids 95d000e0-48a3-41e1-907f-e32dc9d58525,51d4b53f-a095-1aa0-e100-80009459e03a -p TANKERKOENIG_API_KEY $TANKERKOENIG_API_KEY
 ```
 
 ## Development
