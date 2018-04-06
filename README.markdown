@@ -43,13 +43,13 @@ export IMAGE_NAME=suhlig/spritwatch
 docker build -t $IMAGE_NAME . && docker push $IMAGE_NAME
 
 # first time
-wsk action create spritwatch --docker $IMAGE_NAME
+wsk action create spritwatch --docker $IMAGE_NAME -p TANKERKOENIG_API_KEY $TANKERKOENIG_API_KEY
 
 # later: just update
-wsk action update spritwatch --docker $IMAGE_NAME
+wsk action update spritwatch --docker $IMAGE_NAME -p TANKERKOENIG_API_KEY $TANKERKOENIG_API_KEY
 
 # invoke
-wsk action invoke spritwatch -r -p ids 95d000e0-48a3-41e1-907f-e32dc9d58525,51d4b53f-a095-1aa0-e100-80009459e03a -p TANKERKOENIG_API_KEY $TANKERKOENIG_API_KEY
+wsk action invoke spritwatch -r -p ids 95d000e0-48a3-41e1-907f-e32dc9d58525,51d4b53f-a095-1aa0-e100-80009459e03a
 ```
 
 ## Development
@@ -63,7 +63,7 @@ wsk action invoke spritwatch -r -p ids 95d000e0-48a3-41e1-907f-e32dc9d58525,51d4
 1. Invoke the action via HTTP:
 
    ```bash
-  curl -H "Content-Type: application/json" -X POST -d '{"value": {"ids": "4429a7d9-fb2d-4c29-8cfe-2ca90323f9f8", "TANKERKOENIG_API_KEY": "00000000-0000-0000-0000-000000000002"}}' localhost:8080/run
+   curl -H "Content-Type: application/json" -X POST -d '{"value": {"ids": "4429a7d9-fb2d-4c29-8cfe-2ca90323f9f8", "TANKERKOENIG_API_KEY": "00000000-0000-0000-0000-000000000002"}}' localhost:8080/run
    ```
 
 # Calling the OpenWhisk API
