@@ -63,6 +63,7 @@ GEM
     hashdiff (0.3.7)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
+    influxdb (0.5.3)
     listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
@@ -83,6 +84,7 @@ GEM
     parallel (1.12.1)
     parser (2.5.0.5)
       ast (~> 2.4.0)
+    pg (1.0.0)
     powerpack (0.1.1)
     pry (0.11.3)
       coderay (~> 1.1.0)
@@ -133,6 +135,7 @@ GEM
     ruby-progressbar (1.9.0)
     ruby_dep (1.5.0)
     safe_yaml (1.0.4)
+    sequel (5.7.1)
     shellany (0.0.1)
     sinatra (2.0.1)
       mustermann (~> 1.0)
@@ -157,6 +160,8 @@ DEPENDENCIES
   aruba
   guard-bundler
   guard-rspec
+  influxdb
+  pg
   pry
   pry-byebug
   puma
@@ -167,6 +172,7 @@ DEPENDENCIES
   rspec
   rspec-collection_matchers
   rubocop
+  sequel
   sinatra
   webmock
 

@@ -5,6 +5,9 @@ source 'https://rubygems.org'
 gem 'puma'
 gem 'rest-client'
 gem 'sinatra'
+gem 'influxdb'
+gem 'pg'
+gem 'sequel'
 
 group :development do
   gem 'aruba'

@@ -35,6 +35,23 @@ bx login --apikey ********
 bx target -r eu-de -o "XMLSOA" -s "webservices"
 ```
 
+## Setup InfluxDB database and -user
+
+```bash
+influx \
+  -host ${influxdb_host?"Missing variable"} \
+  -ssl \
+  -port ${influxdb_port?"Missing variable"} \
+  -username ${influxdb_admin_user?"Missing variable"} \
+  -password ${influxdb_admin_password?"Missing variable"} \
+  -execute "$(cat <<END_HEREDOC
+    CREATE DATABASE ${spritwatch_database?"Missing variable"};
+    CREATE USER ${spritwatch_user?"Missing variable"} WITH PASSWORD '${spritwatch_password?"Missing variable"}';
+    GRANT ALL ON ${spritwatch_database?"Missing variable"} TO ${spritwatch_user?"Missing variable"};
+END_HEREDOC
+)"
+```
+
 ## Build and Publish
 
 ```bash
