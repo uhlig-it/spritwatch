@@ -54,6 +54,7 @@ module SpritWatch
     # ids  IDs der Tankstellen  UUIDs, durch Komma getrennt
     def prices(*ids)
       raise 'Stations are missing' if ids.flatten.empty?
+      warn 'Warning: Can only query 10 stations at a time' if ids.flatten.size > 10
 
       price_mapper = PriceMapper.new
 
