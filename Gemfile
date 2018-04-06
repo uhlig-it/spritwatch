@@ -2,12 +2,12 @@
 
 source 'https://rubygems.org'
 
-gem 'puma'
-gem 'rest-client'
-gem 'sinatra'
 gem 'influxdb'
 gem 'pg'
+gem 'puma'
+gem 'rest-client'
 gem 'sequel'
+gem 'sinatra'
 
 group :development do
   gem 'aruba'

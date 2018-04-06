@@ -1,18 +1,16 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-=begin
-* Install Postgres (e.g. on [Ubuntu](https://help.ubuntu.com/community/PostgreSQL#Alternative_Server_Setup))
-  - `sudo apt-get install postgresql postgresql-contrib postgresql-client libpq-dev`
-  - the pg gem needs `build-essential libpq-dev libgmp-dev`
-* Get latest dump from https://creativecommons.tankerkoenig.de/history/history.dump.gz
-* Import into postgres with `zcat ~/Downloads/history.dump.gz | psql postgres:///tankerkönig`
-* run this script
-=end
+# * Install Postgres (e.g. on [Ubuntu](https://help.ubuntu.com/community/PostgreSQL#Alternative_Server_Setup))
+#   - `sudo apt-get install postgresql postgresql-contrib postgresql-client libpq-dev`
+#   - the pg gem needs `build-essential libpq-dev libgmp-dev`
+# * Get latest dump from https://creativecommons.tankerkoenig.de/history/history.dump.gz
+# * Import into postgres with `zcat ~/Downloads/history.dump.gz | psql postgres:///tankerkönig`
+# * run this script
 
 $LOAD_PATH.unshift(File.expand_path('../lib', __dir__))
 
-require "influxdb"
+require 'influxdb'
 require 'sequel'
 
 station_id = ARGV.first || raise('Need station id') # '870efffb-676b-4301-854e-c80e93c3e3ef'
@@ -30,12 +28,12 @@ data = prices.map do |price|
       station: price[:stid],
       brand: station[:brand],
       street: station[:street],
-      place: station[:place],
-    },
+      place: station[:place]
+    }
   }
 end
 
-# TODO Send an event when the station is opening and closing
+# TODO: Send an event when the station is opening and closing
 
 InfluxDB::Client.new(
   host: ENV.fetch('influxdb_host'),
