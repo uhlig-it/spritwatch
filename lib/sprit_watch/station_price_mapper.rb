@@ -1,9 +1,15 @@
 # frozen_string_literal: true
 
+require 'sprit_watch/station'
 require 'sprit_watch/fuel_price_factory'
 
 module SpritWatch
-  class PriceMapper
+  #
+  # Maps the result of a price query to a station with prices. The attributes
+  # are slightly different from a list query, so that we need a separate mapper
+  # class.
+  #
+  class StationPriceMapper
     def initialize
       @fuel_price_factory = FuelPriceFactory.new
     end

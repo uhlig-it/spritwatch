@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require 'sprit_watch/price'
-require 'sprit_watch/station_mapper'
+require 'sprit_watch/station_list_mapper'
 
-describe SpritWatch::StationMapper do
+describe SpritWatch::StationListMapper do
   subject(:station) { described_class.new.map(json) }
 
   context 'Total Station in Sommer-Straße 2' do

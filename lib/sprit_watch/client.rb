@@ -6,6 +6,7 @@
 # overrides  erweiterte Öffnungszeiten  Änderungen der regulären ÖZ - bspw. eine temporäre Schliessung
 # wholeDay  ganztägig geöffnet  true, false
 # state  Bundesland  Ein Kürzel für das Bundesland - ist meist nicht angegeben
+#
 # Parameter  Bedeutung  Format
 # id  ID der Tankstelle  UUID
 # apikey  Der persönliche API-Key  UUID
@@ -15,8 +16,8 @@
 require 'rest-client'
 require 'json'
 
-require 'sprit_watch/station_mapper'
-require 'sprit_watch/price_mapper'
+require 'sprit_watch/station_list_mapper'
+require 'sprit_watch/station_price_mapper'
 
 module SpritWatch
   class Client
@@ -36,7 +37,7 @@ module SpritWatch
     # TODO +sort+  Sortierung  price, dist
     #
     def list(latitude:, longitude:, radius:, type: :all, closed: false)
-      station_mapper = StationMapper.new
+      station_mapper = StationListMapper.new
       response = fetch_list(latitude: latitude, longitude: longitude, radius: radius, type: type)
 
       # rubocop:disable Style/MultilineBlockChain
@@ -56,10 +57,10 @@ module SpritWatch
       raise 'Stations are missing' if ids.flatten.empty?
       warn 'Warning: Can only query 10 stations at a time' if ids.flatten.size > 10
 
-      price_mapper = PriceMapper.new
+      station_price_mapper = StationPriceMapper.new
 
       fetch_prices(ids)['prices'].map do |id, attributes|
-        price_mapper.map(id, attributes)
+        station_price_mapper.map(id, attributes)
       end
     end
 
