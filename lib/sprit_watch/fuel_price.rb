@@ -6,6 +6,7 @@ module SpritWatch
     include Comparable
 
     def <=>(other)
+      raise ArgumentError, 'Cannot compare with something that does not have a type' unless other.respond_to?(:type)
       raise ArgumentError, "Cannot compare #{type} with #{other.type}" if type != other.type
       price <=> other.price
     end

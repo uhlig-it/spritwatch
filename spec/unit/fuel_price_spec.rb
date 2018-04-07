@@ -15,4 +15,8 @@ describe SpritWatch::FuelPrice do
   it 'has a string representation' do
     expect(fuel_price.to_s).to eq('Diesel: 47.114 €')
   end
+
+  it 'refuses to be compared to something untyped' do
+    expect { fuel_price == '42' }.to raise_error(ArgumentError)
+  end
 end
