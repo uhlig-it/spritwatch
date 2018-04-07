@@ -57,13 +57,19 @@ END_HEREDOC
 ```bash
 docker login -u suhlig
 export IMAGE_NAME=suhlig/spritwatch
-docker build -t $IMAGE_NAME . && docker push $IMAGE_NAME
+docker build -t "$IMAGE_NAME" . && docker push "$IMAGE_NAME"
 
-# first time
-wsk action create spritwatch --docker $IMAGE_NAME -p TANKERKOENIG_API_KEY $TANKERKOENIG_API_KEY
+# first time setup: use update as below, and replace 'update' with 'create'
 
-# later: just update
-wsk action update spritwatch --docker $IMAGE_NAME -p TANKERKOENIG_API_KEY $TANKERKOENIG_API_KEY
+# Update the action
+wsk action update spritwatch \
+  --docker "$IMAGE_NAME" \
+  -p TANKERKOENIG_API_KEY "$TANKERKOENIG_API_KEY" \
+  -p influxdb_host "$influxdb_host" \
+  -p influxdb_port "$influxdb_port" \
+  -p spritwatch_database "$spritwatch_database" \
+  -p spritwatch_user "$spritwatch_user" \
+  -p spritwatch_password "$spritwatch_password"
 
 # invoke
 wsk action invoke spritwatch -r -p ids 95d000e0-48a3-41e1-907f-e32dc9d58525,51d4b53f-a095-1aa0-e100-80009459e03a
@@ -80,7 +86,17 @@ wsk action invoke spritwatch -r -p ids 95d000e0-48a3-41e1-907f-e32dc9d58525,51d4
 1. Invoke the action via HTTP:
 
    ```bash
-   curl -H "Content-Type: application/json" -X POST -d '{"value": {"ids": "4429a7d9-fb2d-4c29-8cfe-2ca90323f9f8", "TANKERKOENIG_API_KEY": "00000000-0000-0000-0000-000000000002"}}' localhost:8080/run
+   jq -n '{
+    "value": {
+      "ids": "870efffb-676b-4301-854e-c80e93c3e3ef,51d4b425-a095-1aa0-e100-80009459e03a,51d4b49c-a095-1aa0-e100-80009459e03a",
+      "TANKERKOENIG_API_KEY": env.TANKERKOENIG_API_KEY,
+      "influxdb_host": env.influxdb_host,
+      "influxdb_port": env.influxdb_port,
+      "spritwatch_database": env.spritwatch_database,
+      "spritwatch_user": env.spritwatch_user,
+      "spritwatch_password": env.spritwatch_password
+    }
+   }' | curl -H "Content-Type: application/json" -X POST -d @- localhost:8080/run
    ```
 
 # Calling the OpenWhisk API
