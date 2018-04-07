@@ -2,6 +2,7 @@ FROM alpine:edge
 
 RUN apk add --no-cache                         \
       build-base                               \
+      postgresql-dev                           \
       ca-certificates                          \
       ruby                                     \
       ruby-dev                                 \
