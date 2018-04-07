@@ -16,6 +16,9 @@ require 'sequel'
 station_id = ARGV.first || raise('Need station id') # '870efffb-676b-4301-854e-c80e93c3e3ef'
 
 db = Sequel.postgres('tankerkönig')
+
+# TODO: Use proper Sequel models
+
 prices = db[:gas_station_information_history].where(stid: station_id)
 station = db[:gas_station].where(id: station_id).first
 
@@ -42,4 +45,4 @@ InfluxDB::Client.new(
   database: ENV.fetch('spritwatch_database'),
   username: ENV.fetch('spritwatch_user'),
   password: ENV.fetch('spritwatch_password')
-).write_points(data)
+).write_points(data) # TODO: Use the MetricsSender

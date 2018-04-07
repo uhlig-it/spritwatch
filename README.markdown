@@ -99,7 +99,17 @@ wsk action invoke spritwatch -r -p ids 95d000e0-48a3-41e1-907f-e32dc9d58525,51d4
    }' | curl -H "Content-Type: application/json" -X POST -d @- localhost:8080/run
    ```
 
-# Calling the OpenWhisk API
+   This assumes that the environment variables referenced with `env.` are available when jq is invoked.
+
+# TODO
+
+## Turn it into a feed
+
+While it would be ideal to get a callback whenever a price changes at Tankerkönig, it is not very likely to happen.
+
+The next best option is an OpenWhisk feed (as a cf app?) that polls Tankerkönig and emits events whenever a price at one of the preferred stations changes.
+
+## Calling the OpenWhisk API from Rake
 
 ```ruby
 response = %x(bx wsk property get --auth)
@@ -116,3 +126,9 @@ else
   # create action
 end
 ```
+
+## Dynamic Ruby Actions
+
+a.k.a. _make Ruby a first-class citizen on OpenWhisk_
+
+When creating or updating an action, the file specified as parameter is passed on to the server's `init` handler as payload. We could write this into a file (local to the container) and evaluate it at `run` time. See [this article](http://jamesthom.as/blog/2017/08/04/large-applications-on-openwhisk/) for details.
