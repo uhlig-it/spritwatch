@@ -7,10 +7,10 @@ task default: ['spec:all']
 
 namespace :spec do
   desc 'Run all tests'
-  task all: %w[rubocop:auto_correct unit system]
+  task all: %w[rubocop unit system]
 
   desc 'Run ci tests'
-  task ci: ['rubocop:auto_correct', :unit]
+  task ci: %w[rubocop unit]
 
   %w[unit system].each do |type|
     desc "Run #{type} tests"
