@@ -16,6 +16,10 @@ module SpritWatch
   class CLI < Thor
     default_task :about
 
+    def self.exit_on_failure?
+      true
+    end
+
     desc 'about', 'Explain what this app is about'
     def about
       puts <<~ABOUT
